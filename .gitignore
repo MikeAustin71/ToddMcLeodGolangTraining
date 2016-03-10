@@ -6,6 +6,8 @@
 bin
 obj
 
+# Ignore Web Storm #
+.idea
 
 # Compiled source #
 ###################
