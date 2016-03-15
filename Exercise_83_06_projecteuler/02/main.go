@@ -5,20 +5,23 @@ import (
 	"math"
 )
 
-// Brute force approach - This is slowest and worst performing solution.
-// Note: at upper limits <= 20, performance is satisfactory. Beginning at
-// upper limit = 30 speed slows dramatically. Note: Analysis is based on
-// uint64.
+// More efficient Brute force approach. This will increment
+// test number by series maximum.  Speed is acceptable but slows
+// down significantly with upper limits >= 30. Note: analysis is
+// based on uint64.
 //
 // See setup info at bottom of this file.
 
 func main() {
-	series := getSeries()
+
+	seriesMaxNum := uint64(20)
+
+	series := getSeries(seriesMaxNum)
 
 	smallestDividend, success := findSmallestDividend(series)
 
 	if success {
-		fmt.Println("Success. The smallest dividend evenly divisible by the series 1 to 20 is - ", smallestDividend)
+		fmt.Println("Success. The smallest dividend evenly divisible by the series 1 to ", seriesMaxNum, " is - ", smallestDividend)
 
 	} else {
 		fmt.Println("Failure - Did Not Locate smallest dividend.")
@@ -26,13 +29,11 @@ func main() {
 
 }
 
-func getSeries() []uint64 {
+func getSeries(seriesMaxNum uint64) []uint64 {
 
-	var MAXSERIESNUM uint64 = 20
+	series := make([]uint64, seriesMaxNum-1)
 
-	series := make([]uint64, MAXSERIESNUM-1)
-
-	for i := uint64(2); i <= MAXSERIESNUM; i++ {
+	for i := uint64(2); i <= seriesMaxNum; i++ {
 		series[i-2] = i
 	}
 
@@ -41,9 +42,10 @@ func getSeries() []uint64 {
 
 func findSmallestDividend(series []uint64) (uint64, bool) {
 
-	for i := series[len(series)-1] + 1; i < math.MaxUint64; i++ {
+	increment := series[len(series)-1]
+	for i := series[len(series)-1]; i < math.MaxUint64; i += increment {
 
-		if isTestNumDivisbleBySeries(series, i) {
+		if IsTestNumDivisbleBySeries(series, i) {
 			return i, true
 		}
 	}
@@ -51,7 +53,7 @@ func findSmallestDividend(series []uint64) (uint64, bool) {
 	return 0, false
 }
 
-func isTestNumDivisbleBySeries(series []uint64, testNum uint64) bool {
+func IsTestNumDivisbleBySeries(series []uint64, testNum uint64) bool {
 
 	for _, v := range series {
 
