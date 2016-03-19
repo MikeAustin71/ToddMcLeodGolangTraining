@@ -64,13 +64,14 @@ func generateSequence(upperLimit *big.Int) []*big.Int {
 }
 
 func generatePrimes(upperLimit *big.Int) []*big.Int {
-	var primes []*big.Int
+	primes := make([]*big.Int, 0, 100)
 	var isPrime bool
 	var j int
 	aryLimit := upperLimit
 	primes = append(primes, big.NewInt(2))
 	increment := big.NewInt(2)
 	zero := big.NewInt(0)
+	modulo := big.NewInt(1)
 
 	for i := big.NewInt(3); i.Cmp(aryLimit) <= 0; i.Add(i, increment) {
 		j = 0
@@ -78,18 +79,14 @@ func generatePrimes(upperLimit *big.Int) []*big.Int {
 		y := big.NewInt(1)
 
 		for y = y.Mul(primes[j], primes[j]); y.Cmp(i) <= 0 && j < len(primes); j++ {
-
-			modulo := big.NewInt(1)
-			modulo = modulo.Mod(i, primes[j])
-			if modulo.Cmp(zero) == 0 {
+			if modulo.Mod(i, primes[j]).Cmp(zero) == 0 {
 				isPrime = false
 				break
 			}
 		}
+
 		if isPrime {
-			prime := big.NewInt(0)
-			prime = prime.Add(prime, i)
-			primes = append(primes, prime)
+			primes = append(primes, big.NewInt(0).Set(i))
 		}
 	}
 
